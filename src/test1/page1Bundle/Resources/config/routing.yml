@@ -1,3 +1,7 @@
 test1page1_homepage:
     pattern:  /hello/{name}
     defaults: { _controller: test1page1Bundle:Default:index }
+
+HelloTheWorld:
+    path:     /hello-world
+    defaults: { _controller: test1page1Bundle:Page1:index }
