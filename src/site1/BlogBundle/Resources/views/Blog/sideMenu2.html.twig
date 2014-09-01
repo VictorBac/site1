@@ -1,0 +1,10 @@
+
+<ul class="side-nav">
+{% for article in liste_articles %}
+	<div class="large-4 medium-4 columns">
+  		<li>
+			<a href="{{ path('blog_voir', {'id': article.id}) }}">{{ article.titre }}</a>
+		</li>
+	</div>  
+{% endfor %}
+</ul>

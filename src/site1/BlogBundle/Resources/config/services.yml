@@ -1,0 +1,7 @@
+parameters:
+#    blog.example.class: site1\BlogBundle\Example
+
+services:
+    site1_blog.antispam:
+        class: site1\BlogBundle\Antispam\Antispam
+        arguments: [@mailer, %locale%, 3]

@@ -1,0 +1,33 @@
+# src//BlogBundle/Resources/config/routing.yml
+
+blog_accueil:
+    path:      /{page}
+    defaults:  { _controller: BlogBundle:Blog:index, page: 1 }
+    requirements:
+        page:  \d*
+
+blog_voir:
+    path:      /article/{id}
+    defaults:  { _controller: BlogBundle:Blog:voir }
+    requirements:
+        id:  \d+
+
+blog_ajouter:
+    path:      /ajouter
+    defaults:  { _controller: BlogBundle:Blog:ajouter }
+
+blog_modifier:
+    path:      /modifier/{id}
+    defaults:  { _controller: BlogBundle:Blog:modifier }
+    requirements:
+        id:  \d+
+
+blog_supprimer:
+    path:      /supprimer/{id}
+    defaults:  { _controller: BlogBundle:Blog:supprimer }
+    requirements:
+        id:  \d+
+
+test:
+    path:      /sideMenu
+    defaults:  { _controller: BlogBundle:Blog:sideMenu }

@@ -1,0 +1,6 @@
+<na<
+<ul>
+	{% for lien in liste_articles %}
+		<li><a href="{{ path('blog_voir', {'id': lien.id}) }}">{{ lien.titre }}</a></li>
+	{% endfor %}
+</ul>

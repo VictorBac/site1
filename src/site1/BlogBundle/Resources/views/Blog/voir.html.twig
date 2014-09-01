@@ -1,0 +1,90 @@
+
+
+{% extends "BlogBundle::layout.html.twig" %}
+
+{% block title %} {{ parent() }}- Article {% endblock %} 
+
+{% block titrePage %} Lecture d'article {% endblock %}
+
+{% block h3 %} {{ article.titre }} {% endblock %}
+
+
+
+{% block contenu %}
+  <p>
+    {# On affiche tous les messages flash dont le nom est « info » #}
+    {% for message in app.session.flashbag.get('info') %}
+      <p>{{ message }}</p>
+    {% endfor %}
+  </p>
+  <p>
+    {% if article.image is not null %}
+      <img src="{{ article.image.url }}" alt="{{ article.image.alt }}" />
+    {% endif %}
+  <p>
+
+  <p>Par {{ article.auteur }}, le {{ article.date|date('d/m/Y') }}</p>
+
+  {% if article.categories.count > 0 %}
+    <p>
+    - Catégories :
+    {% for categorie in article.categories %}
+      {{ categorie.nom }}
+      {% if not loop.last %} - {% endif %}
+    {% endfor %}
+    </p>
+  {% endif %}
+
+  
+
+  {% if liste_articleCompetence|length > 0 %}
+    <div>
+      Compétences utilisées dans cet article :
+      <ul>
+        {% for articleCompetence in liste_articleCompetence %}
+          <li>{{ articleCompetence.competence.nom }} : {{ articleCompetence.niveau }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+
+
+  <div class="well">
+    <p>
+    {{ article.contenu }}
+  </p>
+  </div>
+
+  <p>
+    <a href="{{ path('blog_accueil') }}" class="small radius button">
+      Retour à la liste
+    </a>
+    <a href="{{ path('blog_modifier', {'id': article.id}) }}" class="small radius button">
+      Modifier l'article
+    </a>
+    <a href="{{ path('blog_supprimer', {'id': article.id}) }}" class="small radius button">
+      Supprimer l'article
+    </a>  
+
+  
+  {% if article.commentaires.count > 0 %}
+      <h3>Commentaires :</h3>
+        {% for commentaire in article.commentaires %}
+        <div class="callout panel"> 
+          <h4>{{ commentaire.auteur }} : </h4>
+          {{ commentaire.contenu }}
+          <br><br>
+          Posté le {{ commentaire.date|date('d/m/Y') }}
+          </div>
+        {% endfor %}
+  {% endif %}
+
+
+{% endblock %}
+
+
+
+
+
+

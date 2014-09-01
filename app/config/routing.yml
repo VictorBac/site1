@@ -1,4 +1,10 @@
-test1page1:
-    resource: "@test1page1Bundle/Resources/config/routing.yml"
+blog:
+    resource: "@BlogBundle/Resources/config/routing.yml"
+    prefix:   /blog
+
+hello:
+    resource: "@HelloBundle/Resources/config/routing.yml"
     prefix:   /
+
+
 

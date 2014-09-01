@@ -1,0 +1,8 @@
+
+{% for article in liste_articles %}
+	<div class="large-4 medium-4 columns">
+  		<p>
+			<a href="{{ path('blog_voir', {'id': article.id}) }}">{{ article.titre }}</a>
+		</p>
+	</div>  
+{% endfor %}

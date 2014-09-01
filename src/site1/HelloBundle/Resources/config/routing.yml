@@ -1,0 +1,12 @@
+hello_homepage:
+    pattern:  /hello/{name}
+    defaults: { _controller: HelloBundle:Default:index }
+
+HelloBundleTest:
+    pattern: /test
+    defaults: { _controller:HelloBundle:Test:index }
+
+
+HelloBundleTest:
+    pattern: /test2
+    defaults: { _controller:HelloBundle:Test:index }

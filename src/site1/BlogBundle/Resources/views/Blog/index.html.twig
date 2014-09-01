@@ -1,0 +1,41 @@
+
+
+{% extends "BlogBundle::layout.html.twig" %}
+
+
+{% block title %} {{ parent() }}- Accueil{% endblock %} 
+
+{% block titrePage %}Accueil{% endblock %}
+
+{% block h3 %} Bienvenue sur l'Accueil de mon blog. {% endblock %}
+
+
+{% block contenu %}
+  <p>
+    {# On affiche tous les messages flash dont le nom est « info » #}
+    {% for message in app.session.flashbag.get('info') %}
+      <p>{{ message }}</p>
+    {% endfor %}
+  </p>
+
+  <h2>Liste des articles</h2>
+
+  <ul>
+    {% for article in articles %}
+      <li>
+        <a href="{{ path('blog_voir', {'id': article.id}) }}">{{ article.titre }}</a>
+        par {{ article.auteur }},
+        le {{ article.date|date('d/m/Y') }}
+      </li>
+    {% else %}
+      <li>Pas (encore !) d'articles</li>
+    {% endfor %}
+  </ul>
+
+{% endblock %}
+
+
+
+
+
+
