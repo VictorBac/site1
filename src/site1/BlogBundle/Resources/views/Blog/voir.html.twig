@@ -19,9 +19,13 @@
   </p>
   <p>
     {% if article.image is not null %}
-      <img src="{{ article.image.url }}" alt="{{ article.image.alt }}" />
+    <img class="test"
+      src="{{ asset(article.image.webPath) }}"
+      alt="{{ article.image.alt }}"
+    />  
+
     {% endif %}
-  <p>
+  </p>
 
   <p>Par {{ article.auteur }}, le {{ article.date|date('d/m/Y') }}</p>
 

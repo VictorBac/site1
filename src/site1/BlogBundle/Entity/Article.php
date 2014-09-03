@@ -23,7 +23,6 @@ class Article
         $this->commentaires = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
-
     /**
      * @var integer
      *
@@ -33,13 +32,11 @@ class Article
      */
     private $id;
 
-
     /**
      * @Gedmo\Slug(fields={"titre"})
      * @ORM\Column(length=128, unique=true)
      */
     private $slug;
-
 
     /**
     * @ORM\OneToMany(targetEntity="site1\BlogBundle\Entity\Commentaire", mappedBy="article")
@@ -53,14 +50,13 @@ class Article
      */
     private $nbCommentaire;
 
-
     /**
      * @ORM\ManyToMany(targetEntity="site1\BlogBundle\Entity\Categorie", cascade={"persist"})
      */
     private $categories;
 
     /**
-     * @ORM\OneToOne(targetEntity="site1\BlogBundle\Entity\Image", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="site1\BlogBundle\Entity\Image", cascade={"persist", "remove"})
      */
     private $image;
 
@@ -70,7 +66,6 @@ class Article
      * @ORM\Column(name="dateEdition", type="datetime", nullable=true))
      */
     private $dateEdition;
-
 
     /**
      * @var \DateTime
@@ -113,12 +108,10 @@ class Article
         $this->setDateEdition(new \Datetime());
     }
 
-
-
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -128,7 +121,7 @@ class Article
     /**
      * Set date
      *
-     * @param \DateTime $date
+     * @param  \DateTime $date
      * @return Article
      */
     public function setDate($date)
@@ -141,7 +134,7 @@ class Article
     /**
      * Get date
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDate()
     {
@@ -151,7 +144,7 @@ class Article
     /**
      * Set titre
      *
-     * @param string $titre
+     * @param  string  $titre
      * @return Article
      */
     public function setTitre($titre)
@@ -164,7 +157,7 @@ class Article
     /**
      * Get titre
      *
-     * @return string 
+     * @return string
      */
     public function getTitre()
     {
@@ -174,7 +167,7 @@ class Article
     /**
      * Set auteur
      *
-     * @param string $auteur
+     * @param  string  $auteur
      * @return Article
      */
     public function setAuteur($auteur)
@@ -187,7 +180,7 @@ class Article
     /**
      * Get auteur
      *
-     * @return string 
+     * @return string
      */
     public function getAuteur()
     {
@@ -197,7 +190,7 @@ class Article
     /**
      * Set contenu
      *
-     * @param string $contenu
+     * @param  string  $contenu
      * @return Article
      */
     public function setContenu($contenu)
@@ -210,7 +203,7 @@ class Article
     /**
      * Get contenu
      *
-     * @return string 
+     * @return string
      */
     public function getContenu()
     {
@@ -220,7 +213,7 @@ class Article
     /**
      * Set publication
      *
-     * @param boolean $publication
+     * @param  boolean $publication
      * @return Article
      */
     public function setPublication($publication)
@@ -233,7 +226,7 @@ class Article
     /**
      * Get publication
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getPublication()
     {
@@ -243,7 +236,7 @@ class Article
     /**
      * Set image
      *
-     * @param \site1\BlogBundle\Entity\Image $image
+     * @param  \site1\BlogBundle\Entity\Image $image
      * @return Article
      */
     public function setImage(\site1\BlogBundle\Entity\Image $image = null)
@@ -256,7 +249,7 @@ class Article
     /**
      * Get image
      *
-     * @return \site1\BlogBundle\Entity\Image 
+     * @return \site1\BlogBundle\Entity\Image
      */
     public function getImage()
     {
@@ -266,7 +259,7 @@ class Article
     /**
      * Add categories
      *
-     * @param \site1\BlogBundle\Entity\Categorie $categories
+     * @param  \site1\BlogBundle\Entity\Categorie $categories
      * @return Article
      */
     public function addCategory(\site1\BlogBundle\Entity\Categorie $categories)
@@ -289,7 +282,7 @@ class Article
     /**
      * Get categories
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getCategories()
     {
@@ -299,13 +292,14 @@ class Article
     /**
      * Add commentaires
      *
-     * @param \site1\BlogBundle\Entity\Commentaire $commentaires
+     * @param  \site1\BlogBundle\Entity\Commentaire $commentaires
      * @return Article
      */
     public function addCommentaire(\site1\BlogBundle\Entity\Commentaire $commentaires)
     {
         $this->commentaires[] = $commentaires;
         $commentaires->setArticle($this); // On ajoute ceci
+
         return $this;
     }
 
@@ -322,7 +316,7 @@ class Article
     /**
      * Get commentaires
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getCommentaires()
     {
@@ -332,7 +326,7 @@ class Article
     /**
      * Set dateEdition
      *
-     * @param \DateTime $dateEdition
+     * @param  \DateTime $dateEdition
      * @return Article
      */
     public function setDateEdition($dateEdition)
@@ -345,7 +339,7 @@ class Article
     /**
      * Get dateEdition
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDateEdition()
     {
@@ -355,7 +349,7 @@ class Article
     /**
      * Set nbCommentaire
      *
-     * @param integer $nbCommentaire
+     * @param  integer $nbCommentaire
      * @return Article
      */
     public function setNbCommentaire($nbCommentaire)
@@ -368,7 +362,7 @@ class Article
     /**
      * Get nbCommentaire
      *
-     * @return integer 
+     * @return integer
      */
     public function getNbCommentaire()
     {
@@ -378,7 +372,7 @@ class Article
     /**
      * Set slug
      *
-     * @param string $slug
+     * @param  string  $slug
      * @return Article
      */
     public function setSlug($slug)
@@ -391,7 +385,7 @@ class Article
     /**
      * Get slug
      *
-     * @return string 
+     * @return string
      */
     public function getSlug()
     {

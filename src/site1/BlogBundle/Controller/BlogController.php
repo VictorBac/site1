@@ -6,7 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use site1\BlogBundle\Entity\Article;
 use site1\BlogBundle\Entity\ArticleCompetence;
-use site1\BlogBundle\Entity\Categorie;
 use site1\BlogBundle\Entity\Commentaire;
 use site1\BlogBundle\Entity\Image;
 use site1\BlogBundle\Form\ArticleType;
@@ -235,7 +234,6 @@ public function ajouterAction()
         // On redirige vers la page de visualisation de l'article nouvellement créé
         return $this->redirect( $this->generateUrl('blog_voir', array('id' => $article->getId())) );
       }
-
     }
 
     return $this->render('BlogBundle:Blog:ajouter.html.twig', array(
@@ -245,44 +243,35 @@ public function ajouterAction()
 
 //*****************************************************************************************
 
-  public function supprimerAction($id)
+  public function supprimerAction(Article $article)
   {
-    // On récupère l'EntityManager
-    $em = $this->getDoctrine()
-               ->getManager();
+    // On crée un formulaire vide, qui ne contiendra que le champ CSRF
+    // Cela permet de protéger la suppression d'article contre cette faille
+    $form = $this->createFormBuilder()->getForm();
 
-    // On récupère l'entité correspondant à l'id $id
-    $article = $em->getRepository('BlogBundle:Article')
-                  ->find($id);
+    $request = $this->getRequest();
+    if ($request->getMethod() == 'POST') {
+      $form->bind($request);
 
-    if ($article === null) {
-      throw $this->createNotFoundException('Article[id='.$id.'] inexistant.');
+      if ($form->isValid()) {
+        // On supprime l'article
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($article);
+        $em->flush();
+
+        // On définit un message flash
+        $this->get('session')->getFlashBag()->add('info', 'Article bien supprimé');
+
+        // Puis on redirige vers l'accueil
+        return $this->redirect($this->generateUrl('blog_accueil'));
+      }
     }
 
-    // On récupère toutes les catégories :
-    $liste_categories = $em->getRepository('BlogBundle:Categorie')
-                           ->findAll();
-
-    // On enlève toutes ces catégories de l'article
-    foreach ($liste_categories as $categorie) {
-      // On fait appel à la méthode removeCategorie() dont on a parlé plus haut
-      // Attention ici, $categorie est bien une instance de Categorie, et pas seulement un id
-      $article->removeCategory($categorie);
-    }
-
-    // On n'a pas modifié les catégories : inutile de les persister
-
-    // On a modifié la relation Article - Categorie
-    // Il faudrait persister l'entité propriétaire pour persister la relation
-    // Or l'article a été récupéré depuis Doctrine, inutile de le persister
-
-    // On déclenche la modification
-    $em->flush();
-
-    $url = $this->generateUrl('blog_voir', array('id' => $id));
-
-    return $this->redirect($url);
-    //return new Response('OK');
+    // Si la requête est en GET, on affiche une page de confirmation avant de supprimer
+    return $this->render('BlogBundle:Blog:supprimer.html.twig', array(
+      'article' => $article,
+      'form'    => $form->createView()
+    ));
   }
 
 //****************************************************************************************
@@ -307,7 +296,7 @@ public function ajouterAction()
                   ->getRepository('BlogBundle:Article')
                   ->findBy(
                     array(),          // Pas de critère
-                    array('date' => 'desc'), // On trie par date décroissante
+                    array('id' => 'DESC'), // On trie par date décroissante
                     $nbr,         // On sélectionne $nombre articles
                     0                // À partir du premier
                   );

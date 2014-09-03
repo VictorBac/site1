@@ -1,0 +1,39 @@
+
+
+{% extends "BlogBundle::layout.html.twig" %}
+
+{% block title %} {{ parent() }}- Article {% endblock %} 
+
+{% block titrePage %} Suppression d'article {% endblock %}
+
+
+{% block contenu %}
+
+  <p>
+    {# On affiche tous les messages flash dont le nom est « info » #}
+    {% for message in app.session.flashbag.get('info') %}
+      <p>{{ message }}</p>
+    {% endfor %}
+  </p>
+
+  <p>
+    Etes-vous certain de vouloir supprimer l'article "{{ article.titre }}" ?
+  </p>
+
+    <form action="{{ path('blog_supprimer', {'id': article.id}) }}" method="post">
+    <a href="{{ path('blog_voir', {'id': article.id}) }}" class="small radius button">
+      Retour à l'Article
+    </a>
+    <input type="submit" value="Supprimer l'article" class="small radius button" />
+    {{ form_rest(form) }}
+  </form>
+
+
+
+{% endblock %}
+
+
+
+
+
+
