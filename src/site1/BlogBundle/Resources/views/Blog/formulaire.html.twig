@@ -3,6 +3,139 @@
 
 {# Ici on laisse vide la vue pour l'instant, on la comblera plus tard lorsqu'on saura afficher un formulaire #}
 <div class="well">
-  Ici se trouvera le formulaire.
+	<form {# 		action="{{ path('votre_route') }}" #} method="post" {{ form_enctype(form) }}>
+
+		{# Les erreurs générales du formulaire. #}
+		{{ form_errors(form) }}
+
+		<div>
+		  {# Génération du label. #}
+		  {{ form_label(form.titre, "Titre de l'article") }}
+
+		  {# Affichage des erreurs pour ce champ précis. #}
+		  {{ form_errors(form.titre) }}
+
+		  {# Génération de l'input. #}
+		  {{ form_widget(form.titre) }}
+		</div>
+
+		{# Idem pour un autre champ. #}
+		<div>
+		  {{ form_label(form.contenu, "Contenu de l'article") }}
+		  {{ form_errors(form.contenu) }}
+		  {{ form_widget(form.contenu) }}
+		</div>
+
+		{# Génération des champs pas encore écrits.
+		   Dans cet exemple, ce serait « date », « auteur » et « publication »,
+		   mais aussi le champ CSRF (géré automatiquement par Symfony !)
+		   et tous les champs cachés (type « hidden »). #}
+		{{ form_rest(form) }}
+		<br/>
+		<input type="submit" class="small radius button" />
+	</form>
+</div>
+{# On charge la bibliothèque jQuery. Ici, je la prends depuis le site jquery.com,
+   mais si vous l'avez en local, changez simplement l'adresse. #}
+<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+
+{# Voici le script en question : #}
+<script type="text/javascript">
+$(document).ready(function() {
+  // On récupère la balise <div> en question qui contient l'attribut « data-prototype » qui nous intéresse.
+  var $container = $('div#site1_blogbundle_article_categories');
+
+  // On ajoute un lien pour ajouter une nouvelle catégorie
+  var $lienAjout = $('<a href="#" id="ajout_categorie" class="small radius button">Ajouter une catégorie</a>');
+  $container.append($lienAjout);
+
+  // On ajoute un nouveau champ à chaque clic sur le lien d'ajout.
+  $lienAjout.click(function(e) {
+    ajouterCategorie($container);
+    e.preventDefault(); // évite qu'un # apparaisse dans l'URL
+    return false;
+  });
+
+  // On définit un compteur unique pour nommer les champs qu'on va ajouter dynamiquement
+  var index = $container.find(':input').length;
+
+  // On ajoute un premier champ directement s'il n'en existe pas déjà un (cas d'un nouvel article par exemple).
+  if (index == 0) {
+    //ajouterCategorie($container);
+  } else {
+    // Pour chaque catégorie déjà existante, on ajoute un lien de suppression
+    $container.children('div').each(function() {
+      ajouterLienSuppression($(this));
+    });
+  }
+
+  // La fonction qui ajoute un formulaire Categorie
+  function ajouterCategorie($container) {
+    // Dans le contenu de l'attribut « data-prototype », on remplace :
+    // - le texte "__name__label__" qu'il contient par le label du champ
+    // - le texte "__name__" qu'il contient par le numéro du champ
+    var $prototype = $($container.attr('data-prototype').replace(/__name__label__/g, 'Catégorie n°' + (index+1))
+                                                        .replace(/__name__/g, index));
+
+    // On ajoute au prototype un lien pour pouvoir supprimer la catégorie
+    ajouterLienSuppression($prototype);
+
+    // On ajoute le prototype modifié à la fin de la balise <div>
+    $container.append($prototype);
+
+    // Enfin, on incrémente le compteur pour que le prochain ajout se fasse avec un autre numéro
+    index++;
+  }
+
+  // La fonction qui ajoute un lien de suppression d'une catégorie
+  function ajouterLienSuppression($prototype) {
+    // Création du lien
+    $lienSuppression = $('<a href="#" class="small radius button">Supprimer</a>');
+
+    // Ajout du lien
+    $prototype.append($lienSuppression);
+
+    // Ajout du listener sur le clic du lien
+    $lienSuppression.click(function(e) {
+      $prototype.remove();
+      e.preventDefault(); // évite qu'un # apparaisse dans l'URL
+      return false;
+    });
+  }
+});
+</script>
+
+
+{# <div id="site1_blogbundle_article_categories" data-prototype="&lt;div&gt;                &lt;label
+class=&quot;required&quot;&gt;__name__label__&lt;/label&gt;
+&lt;div id=&quot;site1_blogbundle_article_categories___name__&quot;&gt;&lt;div&gt;
+&lt;label for=&quot;site1_blogbundle_article_categories___name___nom&quot;
+class=&quot;required&quot;&gt;Nom&lt;/label&gt;&lt;input type=&quot;text&quot;
+id=&quot;site1_blogbundle_article_categories___name___nom&quot;
+name=&quot;site1_blogbundle_article[categories][__name__][nom]&quot;required=&quot;required&quot;/&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;">
 </div>
 
+
+<div id="sdz_blogbundle_articletype_categories" data-prototype="&lt;div&gt;&lt;label
+class=&quot;required&quot;&gt;__name__label__&lt;/label&gt;
+&lt;div id=&quot;sdz_blogbundle_articletype_categories___name__&quot;&gt;&lt;div&gt;
+&lt;label for=&quot;sdz_blogbundle_articletype_categories___name___nom&quot;
+class=&quot;required&quot;&gt;Nom&lt;/label&gt;&lt;input type=&quot;text&quot; 
+id=&quot;sdz_blogbundle_articletype_categories___name___nom&quot;
+name=&quot;sdz_blogbundle_articletype[categories][__name__][nom]&quot; required=&quot;required&quot; /&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;">
+</div>
+
+    <div>
+  <label class="required">__name__label__</label>
+  <div id="sdz_blogbundle_articletype_categories___name__">
+    <div>
+      <label for="sdz_blogbundle_articletype_categories___name___nom" class="required">Nom</label>
+      <input type="text"
+             id="sdz_blogbundle_articletype_categories___name___nom"
+             name="sdz_blogbundle_articletype[categories][__name__][nom]"
+             required="required" />
+    </div>
+  </div>
+</div> #}

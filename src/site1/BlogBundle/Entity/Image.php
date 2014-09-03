@@ -35,11 +35,12 @@ class Image
      */
     private $alt;
 
+    private $file;
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -49,7 +50,7 @@ class Image
     /**
      * Set url
      *
-     * @param string $url
+     * @param  string $url
      * @return Image
      */
     public function setUrl($url)
@@ -62,7 +63,7 @@ class Image
     /**
      * Get url
      *
-     * @return string 
+     * @return string
      */
     public function getUrl()
     {
@@ -72,7 +73,7 @@ class Image
     /**
      * Set alt
      *
-     * @param string $alt
+     * @param  string $alt
      * @return Image
      */
     public function setAlt($alt)
@@ -85,7 +86,7 @@ class Image
     /**
      * Get alt
      *
-     * @return string 
+     * @return string
      */
     public function getAlt()
     {

@@ -4,12 +4,12 @@ namespace site1\BlogBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-
 use site1\BlogBundle\Entity\Article;
-use site1\BlogBundle\Entity\Image;
-use site1\BlogBundle\Entity\Commentaire;
-use site1\BlogBundle\Entity\Categorie;
 use site1\BlogBundle\Entity\ArticleCompetence;
+use site1\BlogBundle\Entity\Categorie;
+use site1\BlogBundle\Entity\Commentaire;
+use site1\BlogBundle\Entity\Image;
+use site1\BlogBundle\Form\ArticleType;
 
 class BlogController extends Controller
 {
@@ -52,15 +52,12 @@ class BlogController extends Controller
       throw new \Exception('Votre message a été détecté comme spam !');
     }
 
-
-
-    if( $page < 1 )
-    {
+    if ($page < 1) {
       // On déclenche une exception NotFoundHttpException
       // Cela va afficher la page d'erreur 404 (on pourra personnaliser cette page plus tard d'ailleurs)
       throw $this->createNotFoundException('Page inexistante (page = '.$page.')');
     }
-  
+
     $articles = $this->getDoctrine()->getManager()->getRepository('BlogBundle:Article')->getArticles();
 
     // Puis modifiez la ligne du render comme ceci, pour prendre en compte nos articles :
@@ -68,7 +65,6 @@ class BlogController extends Controller
       'articles' => $articles
     ));
   }
-
 
 //****************************************************************************************
 
@@ -80,13 +76,11 @@ class BlogController extends Controller
   // On récupère l'entité correspondant à l'id $id
   $article = $em->getRepository('BlogBundle:Article')->getArticleAvecCommentaire($id);
 
-
   // $article est donc une instance de site1\BlogBundle\Entity\Article
   // Ou null si aucun article n'a été trouvé avec l'id $id
-  if($article === null)
-  {
+  if ($article === null) {
     throw $this->createNotFoundException('Article[id='.$id.'] inexistant.');
-  }  
+  }
 
   $liste_articleCompetence = $em->getRepository('BlogBundle:ArticleCompetence')
                                 ->findByArticle($article->getId());
@@ -97,6 +91,51 @@ class BlogController extends Controller
     ));
   }
 
+//****************************************************************************************
+
+  public function modifierAction($id)
+  {
+        // On récupère l'EntityManager
+    $em = $this->getDoctrine()
+               ->getManager();
+    // On récupère l'entité correspondant à l'id $id
+    $article = $em->getRepository('BlogBundle:Article')->find($id);
+
+    if ($article === null) {
+      throw $this->createNotFoundException('Article[id='.$id.'] inexistant.');
+    }
+
+    //On test si on est en post => l'article a été modifié.
+    $request = $this->get('request');
+
+    $form = $this->createForm(new ArticleType(), $article);
+    $form->remove('date');
+
+    if ($request->getMethod() == 'POST') {
+      // On fait le lien Requête <-> Formulaire
+      // À partir de maintenant, la variable $article contient les valeurs entrées dans le formulaire par le visiteur
+      $form->bind($request);
+
+      // On vérifie que les valeurs entrées sont correctes
+      // (Nous verrons la validation des objets en détail dans le prochain chapitre)
+      if ($form->isValid()) {
+        // On l'enregistre notre objet $article dans la base de données
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($article);
+        $em->flush();
+
+        $this->get('session')->getFlashBag()->add('info', 'Article bien modifié !');
+        // On redirige vers la page de visualisation de l'article nouvellement créé
+        return $this->redirect( $this->generateUrl('blog_voir', array('id' => $article->getId())) );
+      }
+
+    }
+
+    return $this->render('BlogBundle:Blog:ajouter.html.twig', array(
+      'form' => $form->createView(),
+    ));
+
+  }
 
 //****************************************************************************************
 
@@ -107,134 +146,102 @@ class BlogController extends Controller
     return new Response("On pourrait afficher l'article correspondant au slug '".$slug."', créé en ".$annee." et au format ".$_format.".");
   }
 
-
 //****************************************************************************************
 
 
 public function ajouterAction()
   {
 
-    // Création de l'entité
     $article = new Article();
-    $article->setTitre('Mon dernier weekend');
-    $article->setAuteur('Bibi');
-    $article->setContenu("C'était vraiment super et on s'est bien amusé.");
-    // On peut ne pas définir ni la date ni la publication,
-    // car ces attributs sont définis automatiquement dans le constructeur
+    $form = $this->createForm(new ArticleType(), $article);
 
     // Création de l'entité Image
-    $image = new Image();
-    $image->setUrl('http://uploads.siteduzero.com/icones/478001_479000/478657.png');
-    $image->setAlt('Logo Symfony2');
+    // $image = new Image();
+    // $image->setUrl('http://uploads.siteduzero.com/icones/478001_479000/478657.png');
+    // $image->setAlt('Logo Symfony2');
 
-    $article->setImage($image);
+    // $article->setImage($image);
 
-    // Création d'un premier commentaire
-    $commentaire1 = new Commentaire();
-    $commentaire1->setAuteur('winzou');
-    $commentaire1->setContenu('On veut les photos !');
+    // // Création d'un premier commentaire
+    // $commentaire1 = new Commentaire();
+    // $commentaire1->setAuteur('winzou');
+    // $commentaire1->setContenu('On veut les photos !');
 
-    // Création d'un deuxième commentaire, par exemple
-    $commentaire2 = new Commentaire();
-    $commentaire2->setAuteur('Choupy');
-    $commentaire2->setContenu('Les photos arrivent !');
+    // // Création d'un deuxième commentaire, par exemple
+    // $commentaire2 = new Commentaire();
+    // $commentaire2->setAuteur('Choupy');
+    // $commentaire2->setContenu('Les photos arrivent !');
 
-    // On lie les commentaires à l'article
-    $commentaire1->setArticle($article);
-    $commentaire2->setArticle($article);  
+    // // On lie les commentaires à l'article
+    // $commentaire1->setArticle($article);
+    // $commentaire2->setArticle($article);
 
-    // On récupère l'EntityManager
-    $em = $this->getDoctrine()->getManager();
+    // // On récupère l'EntityManager
+    // $em = $this->getDoctrine()->getManager();
 
-    // Étape 1 : On « persiste » l'entité
-    $em->persist($article);
-    $em->persist($commentaire1);
-    $em->persist($commentaire2);
+    // // Étape 1 : On « persiste » l'entité
+    // $em->persist($article);
+    // $em->persist($commentaire1);
+    // $em->persist($commentaire2);
 
-    // Étape 2 : On « flush » tout ce qui a été persisté avant
-    $em->flush();
+    // // Étape 2 : On « flush » tout ce qui a été persisté avant
+    // // $em->flush();
 
+    // // Les compétences existent déjà, on les récupère depuis la bdd
+    // $liste_competences = $em->getRepository('BlogBundle:Competence')
+    //                         ->findAll(); // Pour l'exemple, notre Article contient toutes les Competences
 
-    // Les compétences existent déjà, on les récupère depuis la bdd
-    $liste_competences = $em->getRepository('BlogBundle:Competence')
-                            ->findAll(); // Pour l'exemple, notre Article contient toutes les Competences
+    // // Pour chaque compétence
+    // foreach ($liste_competences as $i => $competence) {
+    //   // On crée une nouvelle « relation entre 1 article et 1 compétence »
+    //   $articleCompetence[$i] = new ArticleCompetence();
 
-    // Pour chaque compétence
-    foreach($liste_competences as $i => $competence)
-    {
-      // On crée une nouvelle « relation entre 1 article et 1 compétence »
-      $articleCompetence[$i] = new ArticleCompetence;
+    //   // On la lie à l'article, qui est ici toujours le même
+    //   $articleCompetence[$i]->setArticle($article);
+    //   // On la lie à la compétence, qui change ici dans la boucle foreach
+    //   $articleCompetence[$i]->setCompetence($competence);
 
-      // On la lie à l'article, qui est ici toujours le même
-      $articleCompetence[$i]->setArticle($article);
-      // On la lie à la compétence, qui change ici dans la boucle foreach
-      $articleCompetence[$i]->setCompetence($competence);
+    //   // Arbitrairement, on dit que chaque compétence est requise au niveau 'Expert'
+    //   $articleCompetence[$i]->setNiveau('Expert');
 
-      // Arbitrairement, on dit que chaque compétence est requise au niveau 'Expert'
-      $articleCompetence[$i]->setNiveau('Expert');
+    //   // Et bien sûr, on persiste cette entité de relation, propriétaire des deux autres relations
+    //   $em->persist($articleCompetence[$i]);
+    // }
 
-      // Et bien sûr, on persiste cette entité de relation, propriétaire des deux autres relations
-      $em->persist($articleCompetence[$i]);
+    // // On déclenche l'enregistrement
+    // $em->flush();
+
+    // On récupère la requête
+    $request = $this->get('request');
+
+    // On vérifie qu'elle est de type POST
+    if ($request->getMethod() == 'POST') {
+      // On fait le lien Requête <-> Formulaire
+      // À partir de maintenant, la variable $article contient les valeurs entrées dans le formulaire par le visiteur
+      $form->bind($request);
+
+      // On vérifie que les valeurs entrées sont correctes
+      // (Nous verrons la validation des objets en détail dans le prochain chapitre)
+      if ($form->isValid()) {
+        // On l'enregistre notre objet $article dans la base de données
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($article);
+        $em->flush();
+
+        $this->get('session')->getFlashBag()->add('info', 'Article bien enregistré !');
+        // Le « flashBag » est ce qui contient les messages flash dans la session
+        // Il peut bien sûr contenir plusieurs messages :
+        //  $this->get('session')->getFlashBag()->add('info', 'Oui oui, il est bien enregistré !');
+        // On redirige vers la page de visualisation de l'article nouvellement créé
+        return $this->redirect( $this->generateUrl('blog_voir', array('id' => $article->getId())) );
+      }
+
     }
 
-    // On déclenche l'enregistrement
-    $em->flush();
-
-
-
-    if( $this->get('request')->getMethod() == 'POST' )
-    {
-      $this->get('session')->getFlashBag()->add('info', 'Article bien enregistré');
-      // Le « flashBag » est ce qui contient les messages flash dans la session
-      // Il peut bien sûr contenir plusieurs messages :
-      $this->get('session')->getFlashBag()->add('info', 'Oui oui, il est bien enregistré !');
-      return $this->redirect( $this->generateUrl('blog_voir', array('id' => $article->getId())) );
-
-    }
-    // Puis on redirige vers la page de visualisation de cet article
-    return $this->redirect( $this->generateUrl('blog_voir', array('id' => $article->getId())) );
-    //return $this->render('BlogBundle:Blog:ajouter.html.twig');
+    return $this->render('BlogBundle:Blog:ajouter.html.twig', array(
+      'form' => $form->createView(),
+    ));
   }
-
-
-
-//****************************************************************************************
-
-  public function modifierAction($id)
-  {
-    // On récupère l'EntityManager
-    $em = $this->getDoctrine()
-               ->getManager();
-
-    // On récupère l'entité correspondant à l'id $id
-    $article = $em->getRepository('BlogBundle:Article')->find($id);
-
-    if ($article === null) {
-      throw $this->createNotFoundException('Article[id='.$id.'] inexistant.');
-    }
-
-    // On récupère toutes les catégories :
-    $liste_categories = $em->getRepository('BlogBundle:Categorie')->findAll();
-
-    // On boucle sur les catégories pour les lier à l'article
-    foreach($liste_categories as $categorie)
-    {
-      $article->addCategory($categorie);
-    }
-
-    // Inutile de persister l'article, on l'a récupéré avec Doctrine
-
-    // Étape 2 : On déclenche l'enregistrement
-    $em->flush();
-
-    //return new Response('OK');
-
-    return $this->redirect( $this->generateUrl('blog_voir', array('id' => $id) ));    
-    //return $this->render('BlogBundle:Blog:modifier.html.twig', array('article' => $article));
-  }
-
-
-
 
 //*****************************************************************************************
 
@@ -251,34 +258,32 @@ public function ajouterAction()
     if ($article === null) {
       throw $this->createNotFoundException('Article[id='.$id.'] inexistant.');
     }
-    
+
     // On récupère toutes les catégories :
     $liste_categories = $em->getRepository('BlogBundle:Categorie')
                            ->findAll();
-    
+
     // On enlève toutes ces catégories de l'article
-    foreach($liste_categories as $categorie)
-    {
+    foreach ($liste_categories as $categorie) {
       // On fait appel à la méthode removeCategorie() dont on a parlé plus haut
       // Attention ici, $categorie est bien une instance de Categorie, et pas seulement un id
       $article->removeCategory($categorie);
     }
 
     // On n'a pas modifié les catégories : inutile de les persister
-    
+
     // On a modifié la relation Article - Categorie
     // Il faudrait persister l'entité propriétaire pour persister la relation
     // Or l'article a été récupéré depuis Doctrine, inutile de le persister
-  
+
     // On déclenche la modification
     $em->flush();
 
     $url = $this->generateUrl('blog_voir', array('id' => $id));
+
     return $this->redirect($url);
     //return new Response('OK');
   }
-
-
 
 //****************************************************************************************
 
@@ -286,20 +291,17 @@ public function ajouterAction()
   {
     // On fixe en dur une liste ici, bien entendu par la suite on la récupérera depuis la BDD !
     $liste = $this->getDoctrine()->getManager()->getRepository('BlogBundle:Article')->getDerniers(3);
-        
+
     return $this->render('BlogBundle:Blog:menu.html.twig', array(
       'liste_articles' => $liste // C'est ici tout l'intérêt : le contrôleur passe les variables nécessaires au template !
     ));
   }
 
-
-
-
 //****************************************************************************************
 
   public function sideMenuAction($nbr)
   {
-    
+
     $liste = $this->getDoctrine()
                   ->getManager()
                   ->getRepository('BlogBundle:Article')
@@ -311,12 +313,10 @@ public function ajouterAction()
                   );
 
     //$liste = $this->getDoctrine()->getManager()->getRepository('BlogBundle:Article')->getDerniers();
-        
     return $this->render('BlogBundle:Blog:sideMenu.html.twig', array(
       'liste_articles' => $liste // C'est ici tout l'intérêt : le contrôleur passe les variables nécessaires au template !
     ));
   }
-
 
 //   public function testAction()
 //   {
@@ -327,10 +327,6 @@ public function ajouterAction()
 
 //     // Reste de la méthode du contrôleur
 // }
-
-
-
-
 
 
 }

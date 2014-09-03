@@ -1,0 +1,29 @@
+<?php
+
+namespace site1\BlogBundle\Form;
+
+use Symfony\Component\Form\FormBuilderInterface;
+use site1\BlogBundle\Form\ArticleType;
+
+class ArticleEditType extends ArticleType
+{
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array                $options
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        parent::buildForm($builder, $options);
+
+        $builder->remove('date') ;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return 'site1_blogbundle_articleedit';
+    }
+}
