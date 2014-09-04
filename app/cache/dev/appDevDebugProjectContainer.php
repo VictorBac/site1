@@ -44,6 +44,7 @@ class appDevDebugProjectContainer extends Container
             'assetic.filter_manager' => 'getAssetic_FilterManagerService',
             'assetic.request_listener' => 'getAssetic_RequestListenerService',
             'assetic.value_supplier.default' => 'getAssetic_ValueSupplier_DefaultService',
+            'blog.validator.antiflood' => 'getBlog_Validator_AntifloodService',
             'cache_clearer' => 'getCacheClearerService',
             'cache_warmer' => 'getCacheWarmerService',
             'controller_name_converter' => 'getControllerNameConverterService',
@@ -363,6 +364,25 @@ class appDevDebugProjectContainer extends Container
     protected function getAssetic_RequestListenerService()
     {
         return $this->services['assetic.request_listener'] = new \Symfony\Bundle\AsseticBundle\EventListener\RequestListener();
+    }
+
+    /**
+     * Gets the 'blog.validator.antiflood' service.
+     *
+     * This service is shared.
+     * This method always returns the same instance of the service.
+     *
+     * @return site1\BlogBundle\Validator\AntiFloodValidator A site1\BlogBundle\Validator\AntiFloodValidator instance.
+     * 
+     * @throws InactiveScopeException when the 'blog.validator.antiflood' service is requested while the 'request' scope is not active
+     */
+    protected function getBlog_Validator_AntifloodService()
+    {
+        if (!isset($this->scopedServices['request'])) {
+            throw new InactiveScopeException('blog.validator.antiflood', 'request');
+        }
+
+        return $this->services['blog.validator.antiflood'] = $this->scopedServices['request']['blog.validator.antiflood'] = new \site1\BlogBundle\Validator\AntiFloodValidator($this->get('request'), $this->get('doctrine.orm.default_entity_manager'));
     }
 
     /**
@@ -3144,7 +3164,7 @@ class appDevDebugProjectContainer extends Container
     {
         $this->services['validator.builder'] = $instance = \Symfony\Component\Validator\Validation::createValidatorBuilder();
 
-        $instance->setConstraintValidatorFactory(new \Symfony\Bundle\FrameworkBundle\Validator\ConstraintValidatorFactory($this, array('validator.expression' => 'validator.expression', 'Symfony\\Component\\Validator\\Constraints\\EmailValidator' => 'validator.email', 'security.validator.user_password' => 'security.validator.user_password', 'doctrine.orm.validator.unique' => 'doctrine.orm.validator.unique')));
+        $instance->setConstraintValidatorFactory(new \Symfony\Bundle\FrameworkBundle\Validator\ConstraintValidatorFactory($this, array('validator.expression' => 'validator.expression', 'Symfony\\Component\\Validator\\Constraints\\EmailValidator' => 'validator.email', 'security.validator.user_password' => 'security.validator.user_password', 'doctrine.orm.validator.unique' => 'doctrine.orm.validator.unique', 'blog_antiflood' => 'blog.validator.antiflood')));
         $instance->setTranslator($this->get('translator'));
         $instance->setTranslationDomain('validators');
         $instance->addXmlMappings(array(0 => '/data/envdev2/envdev/victor2/test/Symfony/vendor/symfony/symfony/src/Symfony/Component/Form/Resources/config/validation.xml'));

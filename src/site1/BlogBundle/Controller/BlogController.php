@@ -221,7 +221,10 @@ public function ajouterAction()
 
       // On vérifie que les valeurs entrées sont correctes
       if ($form->isValid()) {
-        $article->getImage()->upload();
+
+        $validator = $this->get('validator');
+        $liste_erreurs = $validator->validate($article);
+
         // On l'enregistre notre objet $article dans la base de données
         $em = $this->getDoctrine()->getManager();
         $em->persist($article);

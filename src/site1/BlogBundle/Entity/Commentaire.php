@@ -4,6 +4,8 @@ namespace site1\BlogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Sdz\BlogBundle\Validator\AntiFlood;
+
 /**
  * Commentaire
  *
@@ -18,7 +20,6 @@ class Commentaire
      * @ORM\JoinColumn(nullable=false)
      */
     private $article;
-
 
     /**
      * @var integer
@@ -40,6 +41,7 @@ class Commentaire
      * @var string
      *
      * @ORM\Column(name="contenu", type="text")
+     * @AntiFlood()
      */
     private $contenu;
 
@@ -50,7 +52,8 @@ class Commentaire
      */
     private $date;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->date = new \Datetime();
     }
 
@@ -70,13 +73,12 @@ class Commentaire
     {
         $nbCommentaire = $this->getArticle()->getNbCommentaire();
         $this->getArticle()->setNbCommentaire($nbCommentaire-1);
-    } 
-
+    }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -86,7 +88,7 @@ class Commentaire
     /**
      * Set auteur
      *
-     * @param string $auteur
+     * @param  string      $auteur
      * @return Commentaire
      */
     public function setAuteur($auteur)
@@ -99,7 +101,7 @@ class Commentaire
     /**
      * Get auteur
      *
-     * @return string 
+     * @return string
      */
     public function getAuteur()
     {
@@ -109,7 +111,7 @@ class Commentaire
     /**
      * Set contenu
      *
-     * @param string $contenu
+     * @param  string      $contenu
      * @return Commentaire
      */
     public function setContenu($contenu)
@@ -122,7 +124,7 @@ class Commentaire
     /**
      * Get contenu
      *
-     * @return string 
+     * @return string
      */
     public function getContenu()
     {
@@ -132,7 +134,7 @@ class Commentaire
     /**
      * Set date
      *
-     * @param \DateTime $date
+     * @param  \DateTime   $date
      * @return Commentaire
      */
     public function setDate($date)
@@ -145,7 +147,7 @@ class Commentaire
     /**
      * Get date
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDate()
     {
@@ -155,7 +157,7 @@ class Commentaire
     /**
      * Set article
      *
-     * @param \site1\BlogBundle\Entity\Article $article
+     * @param  \site1\BlogBundle\Entity\Article $article
      * @return Commentaire
      */
     public function setArticle(\site1\BlogBundle\Entity\Article $article)
@@ -168,7 +170,7 @@ class Commentaire
     /**
      * Get article
      *
-     * @return \site1\BlogBundle\Entity\Article 
+     * @return \site1\BlogBundle\Entity\Article
      */
     public function getArticle()
     {

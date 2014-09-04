@@ -4,13 +4,17 @@ namespace site1\BlogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * Article
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="site1\BlogBundle\Entity\ArticleRepository")
+ *
  * @ORM\HasLifecycleCallbacks()
+ *
+ * @UniqueEntity(fields="titre", message="Un article existe déjà avec ce titre.")
  */
 class Article
 {
@@ -57,6 +61,7 @@ class Article
 
     /**
      * @ORM\OneToOne(targetEntity="site1\BlogBundle\Entity\Image", cascade={"persist", "remove"})
+     * @Assert\Valid()
      */
     private $image;
 
@@ -71,6 +76,7 @@ class Article
      * @var \DateTime
      *
      * @ORM\Column(name="date", type="datetime")
+     * @Assert\DateTime()
      */
     private $date;
 
@@ -78,6 +84,7 @@ class Article
      * @var string
      *
      * @ORM\Column(name="titre", type="string", length=255)
+     * @Assert\Length(min="10")
      */
     private $titre;
 
@@ -85,6 +92,7 @@ class Article
      * @var string
      *
      * @ORM\Column(name="auteur", type="string", length=255)
+     * @Assert\Length(min="2")
      */
     private $auteur;
 
@@ -92,6 +100,7 @@ class Article
      * @var string
      *
      * @ORM\Column(name="contenu", type="text")
+     * @Assert\NotBlank()
      */
     private $contenu;
 

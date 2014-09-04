@@ -1430,6 +1430,7 @@
               <argument key="Symfony\Component\Validator\Constraints\EmailValidator">validator.email</argument>
               <argument key="security.validator.user_password">security.validator.user_password</argument>
               <argument key="doctrine.orm.validator.unique">doctrine.orm.validator.unique</argument>
+              <argument key="blog_antiflood">blog.validator.antiflood</argument>
             </argument>
           </service>
         </argument>
@@ -2504,6 +2505,11 @@
       <argument type="service" id="swiftmailer.mailer.default"/>
       <argument>fr</argument>
       <argument>3</argument>
+    </service>
+    <service id="blog.validator.antiflood" class="site1\BlogBundle\Validator\AntiFloodValidator" scope="request">
+      <tag name="validator.constraint_validator" alias="blog_antiflood"/>
+      <argument type="service" id="request"/>
+      <argument type="service" id="doctrine.orm.default_entity_manager"/>
     </service>
     <service id="stof_doctrine_extensions.uploadable.manager" class="Stof\DoctrineExtensionsBundle\Uploadable\UploadableManager">
       <argument type="service">
