@@ -221,8 +221,8 @@ public function ajouterAction()
       $form->bind($request);
 
       // On vérifie que les valeurs entrées sont correctes
-      // (Nous verrons la validation des objets en détail dans le prochain chapitre)
       if ($form->isValid()) {
+        $article->getImage()->upload();
         // On l'enregistre notre objet $article dans la base de données
         $em = $this->getDoctrine()->getManager();
         $em->persist($article);

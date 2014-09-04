@@ -64,10 +64,10 @@ class Image extends \site1\BlogBundle\Entity\Image implements \Doctrine\ORM\Prox
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return array('__isInitialized__', '' . "\0" . 'site1\\BlogBundle\\Entity\\Image' . "\0" . 'id', '' . "\0" . 'site1\\BlogBundle\\Entity\\Image' . "\0" . 'url', '' . "\0" . 'site1\\BlogBundle\\Entity\\Image' . "\0" . 'alt');
+            return array('__isInitialized__', '' . "\0" . 'site1\\BlogBundle\\Entity\\Image' . "\0" . 'id', '' . "\0" . 'site1\\BlogBundle\\Entity\\Image' . "\0" . 'url', '' . "\0" . 'site1\\BlogBundle\\Entity\\Image' . "\0" . 'alt', '' . "\0" . 'site1\\BlogBundle\\Entity\\Image' . "\0" . 'file');
         }
 
-        return array('__isInitialized__', '' . "\0" . 'site1\\BlogBundle\\Entity\\Image' . "\0" . 'id', '' . "\0" . 'site1\\BlogBundle\\Entity\\Image' . "\0" . 'url', '' . "\0" . 'site1\\BlogBundle\\Entity\\Image' . "\0" . 'alt');
+        return array('__isInitialized__', '' . "\0" . 'site1\\BlogBundle\\Entity\\Image' . "\0" . 'id', '' . "\0" . 'site1\\BlogBundle\\Entity\\Image' . "\0" . 'url', '' . "\0" . 'site1\\BlogBundle\\Entity\\Image' . "\0" . 'alt', '' . "\0" . 'site1\\BlogBundle\\Entity\\Image' . "\0" . 'file');
     }
 
     /**
@@ -186,6 +186,28 @@ class Image extends \site1\BlogBundle\Entity\Image implements \Doctrine\ORM\Prox
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getId', array());
 
         return parent::getId();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function upload()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'upload', array());
+
+        return parent::upload();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getUploadDir()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getUploadDir', array());
+
+        return parent::getUploadDir();
     }
 
     /**
